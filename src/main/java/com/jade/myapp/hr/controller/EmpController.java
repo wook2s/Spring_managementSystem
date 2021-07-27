@@ -92,6 +92,7 @@ public class EmpController {
 		}
 		logger.info("insert start");
 		try {
+			//System.out.println(0/0);
 			empService.insertEmp(emp);
 			logger.info("insert ok");
 		} catch (RuntimeException e) {

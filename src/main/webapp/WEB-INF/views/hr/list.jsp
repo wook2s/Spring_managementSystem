@@ -21,6 +21,15 @@
 	</style>
 </head>
 <body>
+
+<c:if test="${message != null}">
+	<script>
+	window.onload =function () {
+		   window.open("popup.jsp",  "error", "width=300, height=360");
+		}
+	</script>
+</c:if>
+
 <div id="container">
 <h1>전체 사원 정보 확인</h1>
 	<button type="button" onclick="location.href='/myapp/hr/insert'">사원 추가하기</button>
