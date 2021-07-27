@@ -4,23 +4,25 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.jade.myapp.HomeController;
 import com.jade.myapp.hr.model.EmpVO;
 import com.jade.myapp.hr.service.IEmpService;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Controller
 public class EmpController {
@@ -29,7 +31,7 @@ public class EmpController {
 	
 	@Autowired
 	IEmpService empService;
-	
+		
 	@ExceptionHandler({RuntimeException.class})
 	public ModelAndView error(HttpServletRequest request, HttpServletResponse response, Exception e) {
 		ModelAndView mav = new ModelAndView();
@@ -72,20 +74,29 @@ public class EmpController {
 	
 	@RequestMapping(value="/hr/insert")
 	public String insertEmp(Model model) {
-		model.addAttribute("jobList",empService.getAllJobId());
+		model.addAttribute("emp", new EmpVO());
+		model.addAttribute("jobList", empService.getAllJobId());
 		model.addAttribute("departmentList", empService.getAllDeptId());
-		model.addAttribute("managerList",empService.getAllManagertId());
-		return "hr/insert";
+		model.addAttribute("managerList", empService.getAllManagertId());
+		return "hr/form";
 	}
 	
 	@RequestMapping(value="/hr/insert", method = RequestMethod.POST)
-	public String insertEmp(EmpVO emp) {
+	public String insertEmp(Model model, RedirectAttributes reAttr, @ModelAttribute("emp") @Valid EmpVO emp, BindingResult result) {
+		if(result.hasErrors()) {
+			logger.info("insert error");
+			model.addAttribute("jobList", empService.getAllJobId());
+			model.addAttribute("departmentList", empService.getAllDeptId());
+			model.addAttribute("managerList", empService.getAllManagertId());
+			return "hr/form";
+		}
 		logger.info("insert start");
 		try {
 			empService.insertEmp(emp);
 			logger.info("insert ok");
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			logger.info("insert fail");
+			reAttr.addFlashAttribute("message",e.getMessage());
 		}
 		return "redirect:/hr";
 	}
