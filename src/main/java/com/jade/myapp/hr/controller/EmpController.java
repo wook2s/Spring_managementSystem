@@ -2,13 +2,18 @@ package com.jade.myapp.hr.controller;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.jade.myapp.hr.model.EmpVO;
 import com.jade.myapp.hr.service.IEmpService;
@@ -18,6 +23,16 @@ public class EmpController {
 
 	@Autowired
 	IEmpService empService;
+	
+	@ExceptionHandler({RuntimeException.class})
+	public ModelAndView error(HttpServletRequest request, HttpServletResponse response, Exception e) {
+		ModelAndView mav = new ModelAndView();
+		mav.addObject("url", request.getRequestURL());
+		mav.addObject("e", e);
+		mav.setViewName("hr/errorPage");
+		return mav;
+	}
+	
 	
 	@RequestMapping(value = "/hr/count")
 	public String empCount(Model model, @RequestParam(value="deptid", required = false, defaultValue = "0") int deptid) {
@@ -32,7 +47,7 @@ public class EmpController {
 	@RequestMapping(value= {"/hr","/hr/list"})
 	public String getAllEmps(Model model){
 		List<EmpVO> empList = empService.getEmpList();
-		model.addAttribute("empList", empList); 
+		model.addAttribute("empList", empList);
 		return "hr/list";
 	}
 	
@@ -108,6 +123,7 @@ public class EmpController {
 		}
 		return "redirect:/hr";
 	}
+	
 	
 }
 

@@ -63,13 +63,11 @@ public class EmpService implements IEmpService{
 
 	@Override
 	public List<Map<String, Object>> getAllDeptId() {
-		// TODO Auto-generated method stub
 		return empRepository.getAllDeptId();
 	}
 
 	@Override
 	public List<Map<String, Object>> getAllJobId() {
-		// TODO Auto-generated method stub
 		return empRepository.getAllJobId();
 	}
 
