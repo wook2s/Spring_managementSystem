@@ -16,7 +16,7 @@
 <body>
 <div id="container">
 <h1>사원 삭제</h1>
-<form action="./delete" method="post">
+<form action="/myapp/hr/delete" method="post">
 	<h2><span style="color: red;">삭제</span>한 정보는 복구할 수 없습니다.</h2>
 	
 	<table>

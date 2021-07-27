@@ -15,12 +15,18 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.jade.myapp.HomeController;
 import com.jade.myapp.hr.model.EmpVO;
 import com.jade.myapp.hr.service.IEmpService;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Controller
 public class EmpController {
 
+	private static final Logger logger = LoggerFactory.getLogger(EmpController.class);
+	
 	@Autowired
 	IEmpService empService;
 	
@@ -32,7 +38,6 @@ public class EmpController {
 		mav.setViewName("hr/errorPage");
 		return mav;
 	}
-	
 	
 	@RequestMapping(value = "/hr/count")
 	public String empCount(Model model, @RequestParam(value="deptid", required = false, defaultValue = "0") int deptid) {
@@ -58,7 +63,6 @@ public class EmpController {
 		return "hr/list";
 	}
 	
-	
 	@RequestMapping(value="/hr/{employeeId}")
 	public String getEmpInfo(@PathVariable int employeeId, Model model) {
 		EmpVO emp = empService.getEmpInfo(employeeId);
@@ -76,12 +80,12 @@ public class EmpController {
 	
 	@RequestMapping(value="/hr/insert", method = RequestMethod.POST)
 	public String insertEmp(EmpVO emp) {
+		logger.info("insert start");
 		try {
 			empService.insertEmp(emp);
-			System.out.println("insert OK");
+			logger.info("insert ok");
 		} catch (Exception e) {
-			System.out.println("insert error");
-			System.out.println(e.toString());
+			logger.info("insert fail");
 		}
 		return "redirect:/hr";
 	}
@@ -94,14 +98,15 @@ public class EmpController {
 		model.addAttribute("managerList",empService.getAllManagertId());
 		return "hr/update";
 	}
+	
 	@RequestMapping(value="/hr/update", method = RequestMethod.POST)
 	public String updateEmp(EmpVO emp) {
+		logger.info("update start");
 		try {
 			empService.updateEmp(emp);
-			System.out.println("update OK");
+			logger.info("update ok");
 		} catch (Exception e) {
-			System.out.println(e.toString());
-			System.out.println("update error");
+			logger.info("update fail");
 		}
 		return "redirect:/hr";
 	}
@@ -114,26 +119,17 @@ public class EmpController {
 	
 	@RequestMapping(value="/hr/delete", method = RequestMethod.POST)
 	public String deleteEmp(int employeeId, String email) {
+		logger.info("delete start");
 		try {
 			empService.deleteEmp(employeeId, email);
-			System.out.println("delete ok");
+			logger.info("delete ok");
 		} catch (Exception e) {
-			System.out.println(e.toString());
-			System.out.println("delete error");
+			logger.info("delete fail");
 		}
 		return "redirect:/hr";
 	}
 	
-	
 }
-
-
-
-
-
-
-
-
 
 
 
